@@ -136,13 +136,13 @@ export function LandingPage() {
           </div>
 
           <h1 className="font-display font-bold leading-[0.95] tracking-tight mb-6">
-            <span className="block text-5xl sm:text-7xl text-foreground">
+            <span className="block text-3xl sm:text-4xl text-foreground">
               KNOW WHAT <span className="text-gradient">CHANGED</span>
             </span>
-            <span className="block text-4xl sm:text-6xl mt-2 text-foreground">
+            <span className="block text-2xl sm:text-3xl mt-2 text-foreground">
               <span className="text-gradient">THIS WEEK</span> — WITHOUT
             </span>
-            <span className="block text-4xl sm:text-6xl text-muted-foreground/70 mt-1">
+            <span className="block text-2xl sm:text-3xl text-muted-foreground/70 mt-1">
               SEARCHING
             </span>
           </h1>
