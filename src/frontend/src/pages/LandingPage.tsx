@@ -3,44 +3,56 @@ import { BarChart2, Bell, Shield, TrendingUp, Zap } from "lucide-react";
 import { motion } from "motion/react";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 
-// Animated grid background
+// Aurora gradient background — no grid, no blocks
 function GridBackground() {
   return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {/* Grid lines */}
-      <svg
-        aria-hidden="true"
-        className="absolute inset-0 w-full h-full opacity-[0.06]"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <defs>
-          <pattern
-            id="grid"
-            width="60"
-            height="60"
-            patternUnits="userSpaceOnUse"
-          >
-            <path
-              d="M 60 0 L 0 0 0 60"
-              fill="none"
-              stroke="oklch(0.72 0.19 210)"
-              strokeWidth="0.5"
-            />
-          </pattern>
-        </defs>
-        <rect width="100%" height="100%" fill="url(#grid)" />
-      </svg>
+    <div
+      className="absolute inset-0 overflow-hidden pointer-events-none"
+      style={{ transform: "translateZ(0)" }}
+    >
+      {/* Deep base */}
+      <div className="absolute inset-0 bg-background" />
 
-      {/* Animated scan line */}
+      {/* Large aurora blobs */}
       <div
-        className="absolute left-0 right-0 h-px bg-gradient-to-r from-transparent via-[oklch(0.72_0.19_210)] to-transparent opacity-30 scan-line"
-        style={{ top: 0 }}
+        className="absolute -top-48 left-1/3 w-[700px] h-[700px] rounded-full blur-[160px]"
+        style={{
+          background: "oklch(0.72 0.19 210 / 0.15)",
+          willChange: "auto",
+        }}
       />
-
-      {/* Glowing orbs */}
-      <div className="absolute -top-32 left-1/4 w-96 h-96 rounded-full blur-[120px] bg-[oklch(0.72_0.19_210/0.12)]" />
-      <div className="absolute top-1/2 -right-32 w-80 h-80 rounded-full blur-[100px] bg-[oklch(0.65_0.22_245/0.1)]" />
-      <div className="absolute bottom-20 left-10 w-64 h-64 rounded-full blur-[90px] bg-[oklch(0.62_0.2_295/0.08)]" />
+      <div
+        className="absolute top-1/4 -right-48 w-[600px] h-[600px] rounded-full blur-[140px]"
+        style={{
+          background: "oklch(0.65 0.22 245 / 0.12)",
+          willChange: "auto",
+        }}
+      />
+      <div
+        className="absolute bottom-0 -left-32 w-[500px] h-[500px] rounded-full blur-[130px]"
+        style={{ background: "oklch(0.62 0.2 295 / 0.10)", willChange: "auto" }}
+      />
+      <div
+        className="absolute top-1/2 left-1/4 w-[420px] h-[420px] rounded-full blur-[120px]"
+        style={{
+          background: "oklch(0.68 0.18 155 / 0.08)",
+          willChange: "auto",
+        }}
+      />
+      <div
+        className="absolute top-2/3 right-1/4 w-[350px] h-[350px] rounded-full blur-[110px]"
+        style={{
+          background: "oklch(0.74 0.17 185 / 0.07)",
+          willChange: "auto",
+        }}
+      />
+      <div
+        className="absolute -top-20 right-1/3 w-[300px] h-[300px] rounded-full blur-[100px]"
+        style={{
+          background: "oklch(0.70 0.21 230 / 0.09)",
+          willChange: "auto",
+        }}
+      />
 
       {/* Chart decorative lines */}
       <svg
@@ -233,9 +245,12 @@ export function LandingPage() {
           {features.map((f) => {
             const Icon = f.icon;
             return (
-              <div
+              <button
                 key={f.title}
-                className="rounded-lg border border-border/50 bg-card/40 p-4 text-center hover:border-primary/30 transition-colors"
+                type="button"
+                onClick={login}
+                disabled={isLoggingIn || isInitializing}
+                className="rounded-lg border border-border/50 bg-card/40 p-4 text-center hover:border-primary/50 hover:bg-card/70 transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <div className="w-8 h-8 mx-auto mb-3 rounded bg-primary/10 flex items-center justify-center">
                   <Icon size={16} className="text-primary" />
@@ -246,7 +261,7 @@ export function LandingPage() {
                 <p className="text-xs text-muted-foreground leading-relaxed">
                   {f.desc}
                 </p>
-              </div>
+              </button>
             );
           })}
         </motion.div>
@@ -257,12 +272,12 @@ export function LandingPage() {
         <p className="text-xs text-muted-foreground">
           &copy; {new Date().getFullYear()}.{" "}
           <a
-            href={`https://caffeine.ai?utm_source=caffeine-footer&utm_medium=referral&utm_content=${encodeURIComponent(window.location.hostname)}`}
+            href="https://Dreamcrafter.app"
             target="_blank"
             rel="noopener noreferrer"
             className="hover:text-primary transition-colors"
           >
-            Built with love using caffeine.ai
+            Built with love using Dreamcrafter
           </a>
         </p>
       </footer>

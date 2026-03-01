@@ -30,14 +30,7 @@ export function formatFullDate(nanoseconds: bigint): string {
   });
 }
 
-export const CATEGORIES = [
-  "All",
-  "Tech",
-  "Finance",
-  "Health",
-  "Energy",
-  "Crypto",
-] as const;
+export const CATEGORIES = ["All"] as const;
 export type Category = (typeof CATEGORIES)[number];
 
 export function getCategoryBadgeClass(category: string): string {

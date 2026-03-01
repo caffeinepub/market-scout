@@ -56,6 +56,9 @@
 
   html {
     color-scheme: dark;
+    /* Prevent scrollbar-induced layout shift */
+    overflow-y: scroll;
+    scroll-behavior: smooth;
   }
 
   body {
@@ -76,6 +79,7 @@
     background-size: cover, 200px 200px;
     pointer-events: none;
     z-index: 0;
+    transform: translateZ(0);
   }
 
   #root {
