@@ -28,6 +28,7 @@ interface HeaderProps {
   onAdminClick: () => void;
   onLogout: () => void;
   principalShort: string;
+  displayName: string;
   notifOpen: boolean;
   onNotifToggle: () => void;
   notifRead: boolean;
@@ -39,6 +40,7 @@ function Header({
   onAdminClick,
   onLogout,
   principalShort,
+  displayName,
   notifOpen,
   onNotifToggle,
   notifRead,
@@ -224,18 +226,26 @@ function Header({
               >
                 <div className="w-6 h-6 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center">
                   <span className="text-primary text-[10px] font-bold">
-                    {principalShort.slice(0, 2).toUpperCase()}
+                    {displayName.slice(0, 2).toUpperCase()}
                   </span>
                 </div>
+                <span className="text-xs text-muted-foreground hidden sm:block max-w-[120px] truncate">
+                  {displayName}
+                </span>
                 <ChevronDown size={12} className="hidden sm:block" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="end"
-              className="w-48 bg-popover border-border"
+              className="w-56 bg-popover border-border"
             >
-              <div className="px-2 py-1.5 text-xs text-muted-foreground border-b border-border mb-1">
-                {principalShort}
+              <div className="px-2 py-1.5 border-b border-border mb-1">
+                <p className="text-xs font-semibold text-foreground truncate">
+                  {displayName}
+                </p>
+                <p className="text-[10px] text-muted-foreground truncate mt-0.5">
+                  {principalShort}
+                </p>
               </div>
               {isAdmin && (
                 <DropdownMenuItem
@@ -281,6 +291,17 @@ export function DashboardPage() {
       })()
     : "User";
 
+  // Try to get a friendly display name from session storage (set during sign-up/sign-in)
+  const displayName = (() => {
+    try {
+      const storedEmail = sessionStorage.getItem("ms_user_email");
+      const storedName = sessionStorage.getItem("ms_user_name");
+      if (storedName) return storedName;
+      if (storedEmail) return storedEmail;
+    } catch {}
+    return principalShort;
+  })();
+
   // Record visit on mount - mutate is stable per React Query docs
   // biome-ignore lint/correctness/useExhaustiveDependencies: recordVisit.mutate is stable
   useEffect(() => {
@@ -308,6 +329,7 @@ export function DashboardPage() {
         onAdminClick={() => setShowAdmin(true)}
         onLogout={handleLogout}
         principalShort={principalShort}
+        displayName={displayName}
         notifOpen={notifOpen}
         onNotifToggle={() => setNotifOpen((o) => !o)}
         notifRead={notifRead}

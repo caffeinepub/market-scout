@@ -337,23 +337,29 @@ function AuthCard({
   function handleSignIn(e: React.FormEvent) {
     e.preventDefault();
     if (!signInEmail) {
-      toast.info("Use Internet Identity below to sign in securely");
+      toast.error("Please enter your email to receive an OTP.");
       return;
     }
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     setGeneratedOtp(code);
-    toast.success(`Your OTP is: ${code} (check your email)`, {
-      duration: 15000,
+    toast.success(`OTP sent to ${signInEmail}`, {
+      description: `Your verification code is: ${code}`,
+      duration: 20000,
     });
     setSignInOtpStep("otp");
   }
 
   function handleSignUp(e: React.FormEvent) {
     e.preventDefault();
+    if (!signupEmail) {
+      toast.error("Please enter your email to receive an OTP.");
+      return;
+    }
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     setGeneratedOtp(code);
-    toast.success(`Your OTP is: ${code} (check your email)`, {
-      duration: 15000,
+    toast.success(`OTP sent to ${signupEmail}`, {
+      description: `Your verification code is: ${code}`,
+      duration: 20000,
     });
     setSignUpOtpStep("otp");
   }
@@ -361,6 +367,13 @@ function AuthCard({
   function handleOtpVerify(entered: string) {
     if (entered === generatedOtp) {
       toast.success("Email verified!");
+      // Store email/name in sessionStorage so dashboard can show them
+      try {
+        const email = signInOtpStep === "otp" ? signInEmail : signupEmail;
+        if (email) sessionStorage.setItem("ms_user_email", email);
+        if (fullName) sessionStorage.setItem("ms_user_name", fullName);
+        else if (username) sessionStorage.setItem("ms_user_name", username);
+      } catch {}
       login();
     } else {
       toast.error("Invalid OTP. Please try again.");
@@ -370,14 +383,13 @@ function AuthCard({
   function handleResend(emailForResend: string) {
     const code = Math.floor(100000 + Math.random() * 900000).toString();
     setGeneratedOtp(code);
-    toast.success(`New OTP is: ${code} (check your email)`, {
-      duration: 15000,
+    toast.success(`OTP resent to ${emailForResend}`, {
+      description: `Your new verification code is: ${code}`,
+      duration: 20000,
     });
-    // suppress unused warning
-    void emailForResend;
   }
 
-  const iiButtonContent = isLoggingIn ? (
+  const googleButtonContent = isLoggingIn ? (
     <span className="flex items-center gap-2">
       <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
       Connecting...
@@ -408,51 +420,68 @@ function AuthCard({
 
         {/* ── Sign In ── */}
         <TabsContent value="signin">
-          <AnimatePresence mode="wait">
-            {signInOtpStep === "form" ? (
-              <motion.div
-                key="signin-form"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.22, ease: "easeOut" }}
-              >
-                <form onSubmit={handleSignIn} className="space-y-4" noValidate>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="signin-email">Email</Label>
-                    <Input
-                      id="signin-email"
-                      type="email"
-                      autoComplete="email"
-                      placeholder="you@example.com"
-                      value={signInEmail}
-                      onChange={(e) => setSignInEmail(e.target.value)}
-                      className="bg-background/60"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="signin-password">Password</Label>
-                    <Input
-                      id="signin-password"
-                      type="password"
-                      autoComplete="current-password"
-                      placeholder="••••••••"
-                      value={signInPassword}
-                      onChange={(e) => setSignInPassword(e.target.value)}
-                      className="bg-background/60"
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full bg-primary/90 hover:bg-primary text-primary-foreground font-semibold tracking-wide glow-primary-hover transition-all duration-200 mt-2"
-                  >
-                    Sign In
-                  </Button>
-                </form>
+          <div className="space-y-4">
+            <form onSubmit={handleSignIn} className="space-y-4" noValidate>
+              <div className="space-y-1.5">
+                <Label htmlFor="signin-email">Email</Label>
+                <Input
+                  id="signin-email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  value={signInEmail}
+                  onChange={(e) => setSignInEmail(e.target.value)}
+                  className="bg-background/60"
+                  disabled={signInOtpStep === "otp"}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="signin-password">Password</Label>
+                <Input
+                  id="signin-password"
+                  type="password"
+                  autoComplete="current-password"
+                  placeholder="••••••••"
+                  value={signInPassword}
+                  onChange={(e) => setSignInPassword(e.target.value)}
+                  className="bg-background/60"
+                  disabled={signInOtpStep === "otp"}
+                />
+              </div>
+              {signInOtpStep === "form" && (
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full bg-primary/90 hover:bg-primary text-primary-foreground font-semibold tracking-wide glow-primary-hover transition-all duration-200 mt-2"
+                >
+                  Send OTP & Sign In
+                </Button>
+              )}
+            </form>
 
+            {/* OTP section — shown at bottom after email submitted */}
+            <AnimatePresence>
+              {signInOtpStep === "otp" && (
+                <motion.div
+                  key="signin-otp-inline"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <OTPScreen
+                    email={signInEmail}
+                    onVerify={handleOtpVerify}
+                    onBack={() => setSignInOtpStep("form")}
+                    onResend={handleResend}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {signInOtpStep === "form" && (
+              <>
                 <Divider />
-
                 <Button
                   type="button"
                   onClick={login}
@@ -460,112 +489,124 @@ function AuthCard({
                   size="lg"
                   className="w-full bg-primary/90 hover:bg-primary text-primary-foreground font-semibold tracking-wide glow-primary-hover transition-all duration-200"
                 >
-                  {iiButtonContent ?? "Sign in with Internet Identity"}
+                  {googleButtonContent ?? "Sign in with Google Account"}
                 </Button>
-                <p className="text-center text-xs text-muted-foreground mt-3">
-                  Secured by the Internet Computer Protocol
+                <p className="text-center text-xs text-muted-foreground mt-1">
+                  Secured by Internet Computer Protocol
                 </p>
-              </motion.div>
-            ) : (
-              <OTPScreen
-                key="signin-otp"
-                email={signInEmail}
-                onVerify={handleOtpVerify}
-                onBack={() => setSignInOtpStep("form")}
-                onResend={handleResend}
-              />
+              </>
             )}
-          </AnimatePresence>
+          </div>
         </TabsContent>
 
         {/* ── Sign Up ── */}
         <TabsContent value="signup">
-          <AnimatePresence mode="wait">
-            {signUpOtpStep === "form" ? (
-              <motion.div
-                key="signup-form"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.28, ease: "easeOut" }}
-              >
-                <form onSubmit={handleSignUp} className="space-y-4" noValidate>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="signup-fullname">Full Name</Label>
-                    <Input
-                      id="signup-fullname"
-                      type="text"
-                      autoComplete="name"
-                      placeholder="Jane Doe"
-                      value={fullName}
-                      onChange={(e) => setFullName(e.target.value)}
-                      className="bg-background/60"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="signup-username">Username</Label>
-                    <Input
-                      id="signup-username"
-                      type="text"
-                      autoComplete="username"
-                      placeholder="janedoe"
-                      value={username}
-                      onChange={(e) => setUsername(e.target.value)}
-                      className="bg-background/60"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="signup-email">Email</Label>
-                    <Input
-                      id="signup-email"
-                      type="email"
-                      autoComplete="email"
-                      placeholder="you@example.com"
-                      value={signupEmail}
-                      onChange={(e) => handleSignupEmailChange(e.target.value)}
-                      className="bg-background/60"
-                    />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="signup-password">Password</Label>
-                    <div className="relative">
-                      <Input
-                        id="signup-password"
-                        type={showSignupPassword ? "text" : "password"}
-                        autoComplete="new-password"
-                        placeholder="••••••••"
-                        value={signupPassword}
-                        onChange={(e) => setSignupPassword(e.target.value)}
-                        className="bg-background/60 pr-10"
-                      />
-                      <button
-                        type="button"
-                        aria-label={
-                          showSignupPassword ? "Hide password" : "Show password"
-                        }
-                        onClick={() => setShowSignupPassword((v) => !v)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-                        tabIndex={0}
-                      >
-                        {showSignupPassword ? (
-                          <EyeOff size={16} />
-                        ) : (
-                          <Eye size={16} />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                  <Button
-                    type="submit"
-                    size="lg"
-                    className="w-full bg-primary/90 hover:bg-primary text-primary-foreground font-semibold tracking-wide glow-primary-hover transition-all duration-200 mt-2"
+          <div className="space-y-4">
+            <form onSubmit={handleSignUp} className="space-y-4" noValidate>
+              <div className="space-y-1.5">
+                <Label htmlFor="signup-fullname">Full Name</Label>
+                <Input
+                  id="signup-fullname"
+                  type="text"
+                  autoComplete="name"
+                  placeholder="Jane Doe"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
+                  className="bg-background/60"
+                  disabled={signUpOtpStep === "otp"}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="signup-username">Username</Label>
+                <Input
+                  id="signup-username"
+                  type="text"
+                  autoComplete="username"
+                  placeholder="janedoe"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  className="bg-background/60"
+                  disabled={signUpOtpStep === "otp"}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="signup-email">Email</Label>
+                <Input
+                  id="signup-email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  value={signupEmail}
+                  onChange={(e) => handleSignupEmailChange(e.target.value)}
+                  className="bg-background/60"
+                  disabled={signUpOtpStep === "otp"}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="signup-password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="signup-password"
+                    type={showSignupPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    placeholder="••••••••"
+                    value={signupPassword}
+                    onChange={(e) => setSignupPassword(e.target.value)}
+                    className="bg-background/60 pr-10"
+                    disabled={signUpOtpStep === "otp"}
+                  />
+                  <button
+                    type="button"
+                    aria-label={
+                      showSignupPassword ? "Hide password" : "Show password"
+                    }
+                    onClick={() => setShowSignupPassword((v) => !v)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                    tabIndex={0}
+                    disabled={signUpOtpStep === "otp"}
                   >
-                    Create Account
-                  </Button>
-                </form>
+                    {showSignupPassword ? (
+                      <EyeOff size={16} />
+                    ) : (
+                      <Eye size={16} />
+                    )}
+                  </button>
+                </div>
+              </div>
+              {signUpOtpStep === "form" && (
+                <Button
+                  type="submit"
+                  size="lg"
+                  className="w-full bg-primary/90 hover:bg-primary text-primary-foreground font-semibold tracking-wide glow-primary-hover transition-all duration-200 mt-2"
+                >
+                  Create Account
+                </Button>
+              )}
+            </form>
 
+            {/* OTP section — shown at bottom after form submitted */}
+            <AnimatePresence>
+              {signUpOtpStep === "otp" && (
+                <motion.div
+                  key="signup-otp-inline"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.25 }}
+                >
+                  <OTPScreen
+                    email={signupEmail}
+                    onVerify={handleOtpVerify}
+                    onBack={() => setSignUpOtpStep("form")}
+                    onResend={handleResend}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {signUpOtpStep === "form" && (
+              <>
                 <Divider />
-
                 <Button
                   type="button"
                   onClick={login}
@@ -573,22 +614,14 @@ function AuthCard({
                   size="lg"
                   className="w-full bg-primary/90 hover:bg-primary text-primary-foreground font-semibold tracking-wide glow-primary-hover transition-all duration-200"
                 >
-                  {iiButtonContent ?? "Sign up with Internet Identity"}
+                  {googleButtonContent ?? "Sign up with Google Account"}
                 </Button>
-                <p className="text-center text-xs text-muted-foreground mt-3">
-                  New? Internet Identity will guide you through setup.
+                <p className="text-center text-xs text-muted-foreground mt-1">
+                  New? Google Account will guide you through setup.
                 </p>
-              </motion.div>
-            ) : (
-              <OTPScreen
-                key="signup-otp-screen"
-                email={signupEmail}
-                onVerify={handleOtpVerify}
-                onBack={() => setSignUpOtpStep("form")}
-                onResend={handleResend}
-              />
+              </>
             )}
-          </AnimatePresence>
+          </div>
         </TabsContent>
       </Tabs>
     </div>
@@ -637,15 +670,13 @@ export function LandingPage() {
             Intelligence Platform
           </div>
 
-          <h1 className="font-display font-bold leading-[0.95] tracking-tight mb-6">
-            <span className="block text-3xl sm:text-4xl text-foreground">
-              KNOW WHAT <span className="text-gradient">CHANGED</span>
+          <h1 className="font-display font-bold leading-tight tracking-tight mb-6">
+            <span className="block text-xl sm:text-2xl text-foreground">
+              STAY AHEAD OF <span className="text-gradient">WHAT MATTERS</span>
             </span>
-            <span className="block text-2xl sm:text-3xl mt-2 text-foreground">
-              <span className="text-gradient">THIS WEEK</span> — WITHOUT
-            </span>
-            <span className="block text-2xl sm:text-3xl text-muted-foreground/70 mt-1">
-              SEARCHING
+            <span className="block text-lg sm:text-xl mt-1.5 text-foreground/80">
+              Weekly job & market updates —{" "}
+              <span className="text-gradient">no searching needed</span>
             </span>
           </h1>
 
