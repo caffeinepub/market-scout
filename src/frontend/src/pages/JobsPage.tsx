@@ -40,7 +40,58 @@ export const suggestedCompanies = [
   "InMobi",
   "PolicyBazaar",
   "Groww",
+  // Additional companies
+  "Ather Energy",
+  "CRED",
+  "Dunzo",
+  "Lenskart",
+  "Sharechat",
+  "Unacademy",
+  "Urban Company",
+  "Vedantu",
+  "Muthoot Finance",
+  "Indigo Airlines",
 ];
+
+/** Official career page URLs for each company */
+export const careerLinks: Record<string, string> = {
+  "Tata Consultancy Services": "https://www.tcs.com/careers",
+  Infosys: "https://www.infosys.com/careers/",
+  Wipro: "https://careers.wipro.com/",
+  "HCL Technologies": "https://www.hcltech.com/careers",
+  "Tech Mahindra": "https://careers.techmahindra.com/",
+  "Reliance Industries": "https://www.ril.com/careers.aspx",
+  "HDFC Bank":
+    "https://www.hdfcbank.com/content/bbp/repositories/723fb80a-2dde-42a3-9793-7ae1be57c87f/?folderPath=/Common/Career/",
+  "ICICI Bank": "https://www.icicicareers.com/",
+  Flipkart: "https://www.flipkartcareers.com/",
+  Zomato: "https://www.zomato.com/jobs",
+  Swiggy: "https://careers.swiggy.com/",
+  Paytm: "https://paytm.com/careers/",
+  "BYJU'S": "https://byjus.com/careers/",
+  Ola: "https://www.olacabs.com/careers",
+  Razorpay: "https://razorpay.com/jobs/",
+  PhonePe: "https://www.phonepe.com/en/careers.html",
+  Zerodha: "https://zerodha.com/careers/",
+  Freshworks: "https://www.freshworks.com/company/careers/",
+  Meesho: "https://meesho.io/careers/",
+  Dream11: "https://careers.dream11.com/",
+  Nykaa: "https://careers.nykaa.com/",
+  MakeMyTrip: "https://careers.makemytrip.com/",
+  InMobi: "https://www.inmobi.com/company/careers/",
+  PolicyBazaar: "https://careers.policybazaar.com/",
+  Groww: "https://groww.in/p/careers",
+  "Ather Energy": "https://atherenergy.com/careers",
+  CRED: "https://careers.cred.club/",
+  Dunzo: "https://www.dunzo.com/careers",
+  Lenskart: "https://www.lenskart.com/careers.html",
+  Sharechat: "https://sharechat.com/careers",
+  Unacademy: "https://unacademy.com/jobs",
+  "Urban Company": "https://www.urbancompany.com/careers",
+  Vedantu: "https://www.vedantu.com/careers",
+  "Muthoot Finance": "https://www.muthootfinance.com/career",
+  "Indigo Airlines": "https://careers.goindigo.in/",
+};
 
 export const mockResults: Record<
   string,
@@ -503,6 +554,186 @@ export const mockResults: Record<
       sector: "Fintech",
     },
   ],
+  "Ather Energy": [
+    {
+      id: 51,
+      title: "EV Systems Engineer",
+      location: "Bengaluru, Karnataka",
+      jobType: "Full-time",
+      audience: "Working Professional",
+      sector: "Automotive",
+    },
+    {
+      id: 52,
+      title: "Hardware Engineering Intern",
+      location: "Bengaluru, Karnataka",
+      jobType: "Internship",
+      audience: "Student",
+      sector: "Automotive",
+    },
+  ],
+  CRED: [
+    {
+      id: 53,
+      title: "Senior Backend Engineer",
+      location: "Bengaluru, Karnataka",
+      jobType: "Full-time",
+      audience: "Working Professional",
+      sector: "Fintech",
+    },
+    {
+      id: 54,
+      title: "Product Design Intern",
+      location: "Bengaluru, Karnataka",
+      jobType: "Internship",
+      audience: "Student",
+      sector: "Fintech",
+    },
+  ],
+  Dunzo: [
+    {
+      id: 55,
+      title: "City Operations Manager",
+      location: "Bengaluru, Karnataka",
+      jobType: "Full-time",
+      audience: "Working Professional",
+      sector: "Food & Delivery",
+    },
+    {
+      id: 56,
+      title: "Operations Intern",
+      location: "Delhi, NCR",
+      jobType: "Internship",
+      audience: "Student",
+      sector: "Food & Delivery",
+    },
+  ],
+  Lenskart: [
+    {
+      id: 57,
+      title: "Retail Expansion Manager",
+      location: "Delhi, NCR",
+      jobType: "Full-time",
+      audience: "Working Professional",
+      sector: "Retail",
+    },
+    {
+      id: 58,
+      title: "Digital Marketing Intern",
+      location: "Gurugram, Haryana",
+      jobType: "Internship",
+      audience: "Student",
+      sector: "Retail",
+    },
+  ],
+  Sharechat: [
+    {
+      id: 59,
+      title: "ML Research Engineer",
+      location: "Bengaluru, Karnataka",
+      jobType: "Full-time",
+      audience: "Working Professional",
+      sector: "Social Media",
+    },
+    {
+      id: 60,
+      title: "Content Strategy Intern",
+      location: "Bengaluru, Karnataka",
+      jobType: "Internship",
+      audience: "Student",
+      sector: "Social Media",
+    },
+  ],
+  Unacademy: [
+    {
+      id: 61,
+      title: "Educator Success Manager",
+      location: "Bengaluru, Karnataka",
+      jobType: "Full-time",
+      audience: "Working Professional",
+      sector: "EdTech",
+    },
+    {
+      id: 62,
+      title: "Content Development Intern",
+      location: "Remote",
+      jobType: "Internship",
+      audience: "Student",
+      sector: "EdTech",
+    },
+  ],
+  "Urban Company": [
+    {
+      id: 63,
+      title: "Partner Growth Manager",
+      location: "Gurugram, Haryana",
+      jobType: "Full-time",
+      audience: "Working Professional",
+      sector: "Consulting",
+    },
+    {
+      id: 64,
+      title: "Business Development Intern",
+      location: "Mumbai, Maharashtra",
+      jobType: "Internship",
+      audience: "Student",
+      sector: "Consulting",
+    },
+  ],
+  Vedantu: [
+    {
+      id: 65,
+      title: "Live Teaching Specialist",
+      location: "Bengaluru, Karnataka",
+      jobType: "Full-time",
+      audience: "Working Professional",
+      sector: "EdTech",
+    },
+    {
+      id: 66,
+      title: "Teaching Intern",
+      location: "Remote",
+      jobType: "Internship",
+      audience: "Student",
+      sector: "EdTech",
+    },
+  ],
+  "Muthoot Finance": [
+    {
+      id: 67,
+      title: "Branch Credit Manager",
+      location: "Kochi, Kerala",
+      jobType: "Full-time",
+      audience: "Working Professional",
+      sector: "Finance",
+    },
+    {
+      id: 68,
+      title: "Finance Trainee",
+      location: "Chennai, Tamil Nadu",
+      jobType: "Internship",
+      audience: "Student",
+      sector: "Finance",
+    },
+  ],
+  "Indigo Airlines": [
+    {
+      id: 69,
+      title: "Aviation Operations Manager",
+      location: "Delhi, NCR",
+      jobType: "Full-time",
+      audience: "Working Professional",
+      sector: "Travel",
+    },
+    {
+      id: 70,
+      title: "Ground Operations Intern",
+      location: "Mumbai, Maharashtra",
+      jobType: "Internship",
+      audience: "Student",
+      sector: "Travel",
+    },
+  ],
 };
 
 type Audience = "All" | "Working Professional" | "Student";
@@ -588,9 +819,14 @@ interface JobCardProps {
 
 function JobCard({ job, index }: JobCardProps) {
   const handleApply = () => {
-    toast.success(`Application started for ${job.title} at ${job.company}!`, {
-      description: "You will be redirected to the company careers page.",
-    });
+    const url = careerLinks[job.company];
+    if (url) {
+      window.open(url, "_blank", "noopener,noreferrer");
+    } else {
+      toast.success(`Application started for ${job.title} at ${job.company}!`, {
+        description: "You will be redirected to the company careers page.",
+      });
+    }
   };
 
   return (
