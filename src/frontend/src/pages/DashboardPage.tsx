@@ -6,43 +6,25 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
-  Activity,
   Bell,
-  Briefcase,
   CalendarCheck,
   ChevronDown,
   LogOut,
-  Settings,
   ShieldAlert,
   Sparkles,
   X,
 } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
-import type { MarketUpdate } from "../backend.d";
-import { UpdateCard, UpdateCardSkeleton } from "../components/UpdateCard";
-import { UpdateDetailPanel } from "../components/UpdateDetailPanel";
-import { UserPrefsModal } from "../components/UserPrefsModal";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
-import {
-  useGetNewUpdatesCount,
-  useGetUpdates,
-  useIsAdmin,
-  useRecordVisit,
-} from "../hooks/useQueries";
-import { CATEGORIES, type Category } from "../utils/formatters";
+import { useIsAdmin, useRecordVisit } from "../hooks/useQueries";
 import { AdminPage } from "./AdminPage";
-import { JobsPage, suggestedCompanies } from "./JobsPage";
-
-type MainView = "feed" | "jobs";
+import { JobsPage } from "./JobsPage";
 
 // ─── Header ──────────────────────────────────────────────────────────────────
 
 interface HeaderProps {
-  newCount: number;
   isAdmin: boolean;
-  onPrefsClick: () => void;
   onAdminClick: () => void;
   onLogout: () => void;
   principalShort: string;
@@ -53,9 +35,7 @@ interface HeaderProps {
 }
 
 function Header({
-  newCount,
   isAdmin,
-  onPrefsClick,
   onAdminClick,
   onLogout,
   principalShort,
@@ -130,7 +110,7 @@ function Header({
               <Bell size={15} />
               {!notifRead && (
                 <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-primary text-primary-foreground text-[9px] font-bold flex items-center justify-center">
-                  {newCount > 0 ? (newCount > 9 ? "9+" : newCount) : 2}
+                  2
                 </span>
               )}
             </button>
@@ -267,13 +247,6 @@ function Header({
                 </DropdownMenuItem>
               )}
               <DropdownMenuItem
-                onClick={onPrefsClick}
-                className="text-foreground cursor-pointer"
-              >
-                <Settings size={13} className="mr-2 text-muted-foreground" />
-                Preferences
-              </DropdownMenuItem>
-              <DropdownMenuItem
                 onClick={onLogout}
                 className="text-destructive cursor-pointer"
               >
@@ -288,127 +261,17 @@ function Header({
   );
 }
 
-// ─── Main Nav Tabs ────────────────────────────────────────────────────────────
-
-interface MainNavTabsProps {
-  active: MainView;
-  onChange: (v: MainView) => void;
-  jobCount: number;
-}
-
-function MainNavTabs({ active, onChange, jobCount }: MainNavTabsProps) {
-  return (
-    <div className="border-b border-border bg-background/70 backdrop-blur-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="flex items-center gap-0">
-          {/* Feed tab */}
-          <button
-            type="button"
-            onClick={() => onChange("feed")}
-            className={`relative flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors ${
-              active === "feed"
-                ? "text-foreground"
-                : "text-muted-foreground hover:text-foreground/80"
-            }`}
-            aria-pressed={active === "feed"}
-          >
-            <Activity size={14} />
-            <span>Feed</span>
-            {active === "feed" && (
-              <motion.div
-                layoutId="nav-underline"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t-full"
-              />
-            )}
-          </button>
-
-          {/* Jobs tab */}
-          <button
-            type="button"
-            onClick={() => onChange("jobs")}
-            className={`relative flex items-center gap-2 px-4 py-3 text-sm font-semibold transition-colors ${
-              active === "jobs"
-                ? "text-foreground"
-                : "text-muted-foreground hover:text-foreground/80"
-            }`}
-            aria-pressed={active === "jobs"}
-          >
-            <Briefcase size={14} />
-            <span>Jobs</span>
-            <span
-              className={`text-[10px] px-1.5 py-0.5 rounded-full font-bold ${
-                active === "jobs"
-                  ? "bg-primary/20 text-primary"
-                  : "bg-muted/40 text-muted-foreground"
-              }`}
-            >
-              {jobCount}
-            </span>
-            {active === "jobs" && (
-              <motion.div
-                layoutId="nav-underline"
-                className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary rounded-t-full"
-              />
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ─── Category Tabs ────────────────────────────────────────────────────────────
-
-interface CategoryTabsProps {
-  active: Category;
-  onChange: (c: Category) => void;
-}
-
-function CategoryTabs({ active, onChange }: CategoryTabsProps) {
-  return (
-    <div className="flex items-center gap-1 overflow-x-auto pb-1 scrollbar-none">
-      {CATEGORIES.map((cat) => (
-        <button
-          type="button"
-          key={cat}
-          onClick={() => onChange(cat)}
-          className={`
-            flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold tracking-wide uppercase transition-all duration-200
-            ${
-              active === cat
-                ? "bg-primary/15 border border-primary/40 text-primary"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted/40 border border-transparent"
-            }
-          `}
-          aria-pressed={active === cat}
-        >
-          {cat}
-        </button>
-      ))}
-    </div>
-  );
-}
-
 // ─── Dashboard Page ───────────────────────────────────────────────────────────
 
 export function DashboardPage() {
   const { identity, clear } = useInternetIdentity();
-  const { data: updates, isLoading } = useGetUpdates();
-  const { data: newCountRaw } = useGetNewUpdatesCount();
   const { data: isAdminVal } = useIsAdmin();
   const recordVisit = useRecordVisit();
 
-  const [activeCategory, setActiveCategory] = useState<Category>("All");
-  const [selectedUpdate, setSelectedUpdate] = useState<MarketUpdate | null>(
-    null,
-  );
-  const [prefsOpen, setPrefsOpen] = useState(false);
   const [showAdmin, setShowAdmin] = useState(false);
-  const [mainView, setMainView] = useState<MainView>("feed");
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifRead, setNotifRead] = useState(false);
 
-  const newCount = newCountRaw ? Number(newCountRaw) : 0;
   const isAdmin = isAdminVal ?? false;
 
   const principalShort = identity
@@ -434,17 +297,6 @@ export function DashboardPage() {
     setNotifOpen(false);
   };
 
-  // Filter updates by category
-  const filtered = updates
-    ? activeCategory === "All"
-      ? updates
-      : updates.filter((u) => u.category === activeCategory)
-    : [];
-
-  const sorted = [...filtered].sort((a, b) =>
-    Number(b.publishedAt - a.publishedAt),
-  );
-
   if (showAdmin) {
     return <AdminPage onBack={() => setShowAdmin(false)} />;
   }
@@ -452,9 +304,7 @@ export function DashboardPage() {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header
-        newCount={newCount}
         isAdmin={isAdmin}
-        onPrefsClick={() => setPrefsOpen(true)}
         onAdminClick={() => setShowAdmin(true)}
         onLogout={handleLogout}
         principalShort={principalShort}
@@ -464,146 +314,10 @@ export function DashboardPage() {
         onMarkAllRead={handleMarkAllRead}
       />
 
-      {/* Main nav tabs — Feed / Jobs */}
-      <MainNavTabs
-        active={mainView}
-        onChange={setMainView}
-        jobCount={suggestedCompanies.length * 2}
-      />
-
-      {/* Jobs view */}
-      {mainView === "jobs" ? (
-        <div className="flex-1">
-          <JobsPage embedded />
-        </div>
-      ) : (
-        <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6">
-          {/* Page title */}
-          <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mb-6"
-          >
-            <div className="flex items-center gap-2 mb-1">
-              <Activity size={14} className="text-primary" />
-              <h1 className="font-display font-bold text-lg text-foreground">
-                Market Intelligence Feed
-              </h1>
-            </div>
-            <p className="text-sm text-muted-foreground">
-              {newCount > 0 ? (
-                <>
-                  <span className="text-primary font-semibold">
-                    {newCount} new
-                  </span>{" "}
-                  update
-                  {newCount !== 1 ? "s" : ""} since your last visit
-                </>
-              ) : (
-                "Your weekly market intelligence digest"
-              )}
-            </p>
-          </motion.div>
-
-          {/* Category tabs */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.1 }}
-            className="mb-6"
-          >
-            <CategoryTabs
-              active={activeCategory}
-              onChange={setActiveCategory}
-            />
-          </motion.div>
-
-          {/* Updates grid */}
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeCategory}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-            >
-              {isLoading ? (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {["s1", "s2", "s3", "s4", "s5", "s6"].map((id) => (
-                    <UpdateCardSkeleton key={id} />
-                  ))}
-                </div>
-              ) : sorted.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-16 rounded-xl border border-border bg-card/50">
-                  <div className="w-12 h-12 rounded-xl border border-border bg-muted/20 flex items-center justify-center mb-4">
-                    <Activity size={20} className="text-muted-foreground" />
-                  </div>
-                  <p className="font-display font-semibold text-foreground mb-1">
-                    No updates in {activeCategory}
-                  </p>
-                  <p className="text-sm text-muted-foreground mb-6">
-                    {activeCategory === "All"
-                      ? "Check back soon for market intelligence updates."
-                      : "Try another category or check back later."}
-                  </p>
-                  {activeCategory !== "All" && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="border-border text-muted-foreground hover:text-foreground mb-6"
-                      onClick={() => setActiveCategory("All")}
-                    >
-                      View all categories
-                    </Button>
-                  )}
-                  {/* Job Openings teaser */}
-                  <div className="w-full max-w-2xl px-4">
-                    <div className="rounded-xl border border-primary/20 bg-primary/5 p-5">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Briefcase size={14} className="text-primary" />
-                        <span className="font-display font-semibold text-sm text-foreground">
-                          While you wait — explore job openings
-                        </span>
-                      </div>
-                      <div className="flex flex-wrap gap-1.5 mb-4">
-                        {suggestedCompanies.map((company) => (
-                          <button
-                            key={company}
-                            type="button"
-                            className="text-[11px] px-2.5 py-1 rounded-full border border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30 hover:bg-primary/10 transition-colors cursor-pointer"
-                            onClick={() => setMainView("jobs")}
-                          >
-                            {company}
-                          </button>
-                        ))}
-                      </div>
-                      <Button
-                        size="sm"
-                        className="bg-primary/10 hover:bg-primary/20 text-primary border border-primary/20 hover:border-primary/40 font-semibold text-xs tracking-wide"
-                        onClick={() => setMainView("jobs")}
-                      >
-                        <Briefcase size={12} className="mr-1.5" />
-                        Browse All Jobs
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {sorted.map((update, i) => (
-                    <UpdateCard
-                      key={update.id.toString()}
-                      update={update}
-                      onClick={setSelectedUpdate}
-                      index={i}
-                    />
-                  ))}
-                </div>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </main>
-      )}
+      {/* Jobs — only view */}
+      <div className="flex-1 flex flex-col">
+        <JobsPage embedded />
+      </div>
 
       {/* Footer */}
       <footer className="border-t border-border/50 py-4 px-6 text-center">
@@ -619,15 +333,6 @@ export function DashboardPage() {
           </a>
         </p>
       </footer>
-
-      {/* Detail Panel */}
-      <UpdateDetailPanel
-        update={selectedUpdate}
-        onClose={() => setSelectedUpdate(null)}
-      />
-
-      {/* Preferences Modal */}
-      <UserPrefsModal open={prefsOpen} onClose={() => setPrefsOpen(false)} />
     </div>
   );
 }
