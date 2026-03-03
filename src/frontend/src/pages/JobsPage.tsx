@@ -8,37 +8,38 @@ import {
   MapPin,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "sonner";
+import { AnalyzingScreen } from "../components/AnalyzingScreen";
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 export const suggestedCompanies = [
-  "OpenAI",
-  "Google",
-  "Amazon",
-  "Microsoft",
-  "Apple",
-  "Meta",
-  "Tesla",
-  "Netflix",
-  "Nvidia",
-  "Stripe",
-  "Anthropic",
-  "Mistral",
-  "Salesforce",
-  "Adobe",
-  "Spotify",
-  "Uber",
-  "Airbnb",
-  "Twitter",
-  "LinkedIn",
-  "Shopify",
-  "Palantir",
-  "Databricks",
-  "Snowflake",
-  "Figma",
-  "Notion",
+  "Tata Consultancy Services",
+  "Infosys",
+  "Wipro",
+  "HCL Technologies",
+  "Tech Mahindra",
+  "Reliance Industries",
+  "HDFC Bank",
+  "ICICI Bank",
+  "Flipkart",
+  "Zomato",
+  "Swiggy",
+  "Paytm",
+  "BYJU'S",
+  "Ola",
+  "Razorpay",
+  "PhonePe",
+  "Zerodha",
+  "Freshworks",
+  "Meesho",
+  "Dream11",
+  "Nykaa",
+  "MakeMyTrip",
+  "InMobi",
+  "PolicyBazaar",
+  "Groww",
 ];
 
 export const mockResults: Record<
@@ -52,407 +53,407 @@ export const mockResults: Record<
     sector: string;
   }>
 > = {
-  OpenAI: [
+  "Tata Consultancy Services": [
     {
       id: 1,
-      title: "Research Scientist",
-      location: "San Francisco, CA",
+      title: "Senior Software Engineer",
+      location: "Mumbai, Maharashtra",
       jobType: "Full-time",
       audience: "Working Professional",
       sector: "Technology",
     },
     {
       id: 2,
-      title: "AI Research Intern",
-      location: "Remote",
+      title: "Software Engineering Trainee",
+      location: "Chennai, Tamil Nadu",
       jobType: "Internship",
       audience: "Student",
       sector: "Technology",
     },
   ],
-  Google: [
+  Infosys: [
     {
       id: 3,
-      title: "Senior Software Engineer",
-      location: "Mountain View, CA",
+      title: "Technology Lead",
+      location: "Bengaluru, Karnataka",
       jobType: "Full-time",
       audience: "Working Professional",
       sector: "Technology",
     },
     {
       id: 4,
-      title: "Software Engineering Intern",
-      location: "New York, NY",
+      title: "Systems Engineer Intern",
+      location: "Pune, Maharashtra",
       jobType: "Internship",
       audience: "Student",
       sector: "Technology",
     },
   ],
-  Amazon: [
+  Wipro: [
     {
       id: 5,
-      title: "Operations Manager",
-      location: "Seattle, WA",
+      title: "Project Manager",
+      location: "Bengaluru, Karnataka",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "E-Commerce",
+      sector: "Technology",
     },
     {
       id: 6,
-      title: "Business Analyst Intern",
-      location: "Seattle, WA",
+      title: "Graduate Engineer Trainee",
+      location: "Hyderabad, Telangana",
       jobType: "Internship",
       audience: "Student",
-      sector: "E-Commerce",
+      sector: "Technology",
     },
   ],
-  Microsoft: [
+  "HCL Technologies": [
     {
       id: 7,
-      title: "Product Manager",
-      location: "Redmond, WA",
+      title: "Cloud Solutions Architect",
+      location: "Noida, Uttar Pradesh",
       jobType: "Full-time",
       audience: "Working Professional",
       sector: "Technology",
     },
     {
       id: 8,
-      title: "Research Intern",
-      location: "Remote",
+      title: "Technology Intern",
+      location: "Chennai, Tamil Nadu",
       jobType: "Internship",
       audience: "Student",
       sector: "Technology",
     },
   ],
-  Apple: [
+  "Tech Mahindra": [
     {
       id: 9,
-      title: "iOS Engineer",
-      location: "Cupertino, CA",
+      title: "Delivery Manager",
+      location: "Pune, Maharashtra",
       jobType: "Full-time",
       audience: "Working Professional",
       sector: "Technology",
     },
     {
       id: 10,
-      title: "Hardware Engineering Intern",
-      location: "Cupertino, CA",
+      title: "IT Support Intern",
+      location: "Bengaluru, Karnataka",
       jobType: "Internship",
       audience: "Student",
       sector: "Technology",
     },
   ],
-  Meta: [
+  "Reliance Industries": [
     {
       id: 11,
-      title: "Data Scientist",
-      location: "Menlo Park, CA",
+      title: "Operations Manager",
+      location: "Mumbai, Maharashtra",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Social Media",
+      sector: "Conglomerate",
     },
     {
       id: 12,
-      title: "AR/VR Research Intern",
-      location: "Remote",
+      title: "Management Trainee",
+      location: "Jamnagar, Gujarat",
       jobType: "Internship",
       audience: "Student",
-      sector: "Social Media",
+      sector: "Conglomerate",
     },
   ],
-  Tesla: [
+  "HDFC Bank": [
     {
       id: 13,
-      title: "Mechanical Engineer",
-      location: "Austin, TX",
+      title: "Branch Manager",
+      location: "Mumbai, Maharashtra",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Automotive",
+      sector: "Finance",
     },
     {
       id: 14,
-      title: "Energy Engineering Intern",
-      location: "Fremont, CA",
+      title: "Banking Operations Intern",
+      location: "Delhi, NCR",
       jobType: "Internship",
       audience: "Student",
-      sector: "Automotive",
+      sector: "Finance",
     },
   ],
-  Netflix: [
+  "ICICI Bank": [
     {
       id: 15,
-      title: "Content Strategy Manager",
-      location: "Los Gatos, CA",
+      title: "Relationship Manager",
+      location: "Mumbai, Maharashtra",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Entertainment",
+      sector: "Finance",
     },
     {
       id: 16,
-      title: "Data Analytics Intern",
-      location: "Remote",
+      title: "Finance Analyst Intern",
+      location: "Bengaluru, Karnataka",
       jobType: "Internship",
       audience: "Student",
-      sector: "Entertainment",
+      sector: "Finance",
     },
   ],
-  Nvidia: [
+  Flipkart: [
     {
       id: 17,
-      title: "GPU Systems Engineer",
-      location: "Santa Clara, CA",
+      title: "Senior Product Manager",
+      location: "Bengaluru, Karnataka",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Technology",
+      sector: "E-Commerce",
     },
     {
       id: 18,
-      title: "Deep Learning Intern",
-      location: "Santa Clara, CA",
+      title: "Product Management Intern",
+      location: "Bengaluru, Karnataka",
       jobType: "Internship",
       audience: "Student",
-      sector: "Technology",
+      sector: "E-Commerce",
     },
   ],
-  Stripe: [
+  Zomato: [
     {
       id: 19,
-      title: "Backend Engineer",
-      location: "San Francisco, CA",
+      title: "Growth Marketing Manager",
+      location: "Gurugram, Haryana",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Fintech",
+      sector: "Food & Delivery",
     },
     {
       id: 20,
-      title: "Engineering Intern",
-      location: "Remote",
+      title: "Business Development Intern",
+      location: "Delhi, NCR",
+      jobType: "Internship",
+      audience: "Student",
+      sector: "Food & Delivery",
+    },
+  ],
+  Swiggy: [
+    {
+      id: 21,
+      title: "Data Scientist",
+      location: "Bengaluru, Karnataka",
+      jobType: "Full-time",
+      audience: "Working Professional",
+      sector: "Food & Delivery",
+    },
+    {
+      id: 22,
+      title: "Data Analytics Intern",
+      location: "Bengaluru, Karnataka",
+      jobType: "Internship",
+      audience: "Student",
+      sector: "Food & Delivery",
+    },
+  ],
+  Paytm: [
+    {
+      id: 23,
+      title: "Backend Engineer",
+      location: "Noida, Uttar Pradesh",
+      jobType: "Full-time",
+      audience: "Working Professional",
+      sector: "Fintech",
+    },
+    {
+      id: 24,
+      title: "Software Engineering Intern",
+      location: "Noida, Uttar Pradesh",
       jobType: "Internship",
       audience: "Student",
       sector: "Fintech",
     },
   ],
-  Anthropic: [
-    {
-      id: 21,
-      title: "Safety Researcher",
-      location: "San Francisco, CA",
-      jobType: "Full-time",
-      audience: "Working Professional",
-      sector: "Technology",
-    },
-    {
-      id: 22,
-      title: "Research Intern",
-      location: "San Francisco, CA",
-      jobType: "Internship",
-      audience: "Student",
-      sector: "Technology",
-    },
-  ],
-  Mistral: [
-    {
-      id: 23,
-      title: "ML Engineer",
-      location: "Paris, France",
-      jobType: "Full-time",
-      audience: "Working Professional",
-      sector: "Technology",
-    },
-    {
-      id: 24,
-      title: "Research Intern",
-      location: "Remote",
-      jobType: "Internship",
-      audience: "Student",
-      sector: "Technology",
-    },
-  ],
-  Salesforce: [
+  "BYJU'S": [
     {
       id: 25,
-      title: "Cloud Solutions Architect",
-      location: "San Francisco, CA",
+      title: "Curriculum Designer",
+      location: "Bengaluru, Karnataka",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Technology",
+      sector: "EdTech",
     },
     {
       id: 26,
-      title: "Software Engineering Intern",
-      location: "Multiple Locations",
+      title: "Content Development Intern",
+      location: "Remote",
       jobType: "Internship",
       audience: "Student",
-      sector: "Technology",
+      sector: "EdTech",
     },
   ],
-  Adobe: [
+  Ola: [
     {
       id: 27,
-      title: "UX Designer",
-      location: "San Jose, CA",
+      title: "Product Manager",
+      location: "Bengaluru, Karnataka",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Technology",
+      sector: "Transportation",
     },
     {
       id: 28,
-      title: "Design Intern",
-      location: "San Jose, CA",
+      title: "Operations Intern",
+      location: "Bengaluru, Karnataka",
       jobType: "Internship",
       audience: "Student",
-      sector: "Technology",
+      sector: "Transportation",
     },
   ],
-  Spotify: [
+  Razorpay: [
     {
       id: 29,
-      title: "Machine Learning Engineer",
-      location: "Remote",
+      title: "Full Stack Engineer",
+      location: "Bengaluru, Karnataka",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Technology",
+      sector: "Fintech",
     },
     {
       id: 30,
-      title: "Data Science Intern",
-      location: "New York, NY",
+      title: "Engineering Intern",
+      location: "Bengaluru, Karnataka",
       jobType: "Internship",
       audience: "Student",
-      sector: "Technology",
+      sector: "Fintech",
     },
   ],
-  Uber: [
+  PhonePe: [
     {
       id: 31,
-      title: "Product Manager",
-      location: "San Francisco, CA",
+      title: "Android Engineer",
+      location: "Bengaluru, Karnataka",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Transportation",
+      sector: "Fintech",
     },
     {
       id: 32,
-      title: "Engineering Intern",
-      location: "Remote",
+      title: "Mobile Development Intern",
+      location: "Bengaluru, Karnataka",
       jobType: "Internship",
       audience: "Student",
-      sector: "Transportation",
+      sector: "Fintech",
     },
   ],
-  Airbnb: [
+  Zerodha: [
     {
       id: 33,
-      title: "Frontend Engineer",
-      location: "San Francisco, CA",
+      title: "Risk Analyst",
+      location: "Bengaluru, Karnataka",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Travel",
+      sector: "Finance",
     },
     {
       id: 34,
-      title: "UX Design Intern",
-      location: "San Francisco, CA",
+      title: "Finance Research Intern",
+      location: "Bengaluru, Karnataka",
       jobType: "Internship",
       audience: "Student",
-      sector: "Travel",
+      sector: "Finance",
     },
   ],
-  Twitter: [
+  Freshworks: [
     {
       id: 35,
-      title: "Platform Engineer",
-      location: "San Francisco, CA",
+      title: "Solutions Engineer",
+      location: "Chennai, Tamil Nadu",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Social Media",
+      sector: "Technology",
     },
     {
       id: 36,
       title: "Software Engineering Intern",
-      location: "Remote",
+      location: "Chennai, Tamil Nadu",
       jobType: "Internship",
       audience: "Student",
-      sector: "Social Media",
+      sector: "Technology",
     },
   ],
-  LinkedIn: [
+  Meesho: [
     {
       id: 37,
-      title: "Data Engineer",
-      location: "Sunnyvale, CA",
+      title: "Category Manager",
+      location: "Bengaluru, Karnataka",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Technology",
+      sector: "E-Commerce",
     },
     {
       id: 38,
-      title: "Product Intern",
-      location: "Sunnyvale, CA",
+      title: "Supply Chain Intern",
+      location: "Bengaluru, Karnataka",
       jobType: "Internship",
       audience: "Student",
-      sector: "Technology",
+      sector: "E-Commerce",
     },
   ],
-  Shopify: [
+  Dream11: [
     {
       id: 39,
-      title: "Commerce Engineer",
-      location: "Remote",
+      title: "Machine Learning Engineer",
+      location: "Mumbai, Maharashtra",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "E-Commerce",
+      sector: "Gaming",
     },
     {
       id: 40,
-      title: "Engineering Intern",
-      location: "Remote",
+      title: "Data Science Intern",
+      location: "Mumbai, Maharashtra",
       jobType: "Internship",
       audience: "Student",
-      sector: "E-Commerce",
+      sector: "Gaming",
     },
   ],
-  Palantir: [
+  Nykaa: [
     {
       id: 41,
-      title: "Forward Deployed Engineer",
-      location: "New York, NY",
+      title: "Brand Manager",
+      location: "Mumbai, Maharashtra",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Technology",
+      sector: "Retail",
     },
     {
       id: 42,
-      title: "Software Engineering Intern",
-      location: "New York, NY",
+      title: "Digital Marketing Intern",
+      location: "Mumbai, Maharashtra",
       jobType: "Internship",
       audience: "Student",
-      sector: "Technology",
+      sector: "Retail",
     },
   ],
-  Databricks: [
+  MakeMyTrip: [
     {
       id: 43,
-      title: "Solutions Engineer",
-      location: "San Francisco, CA",
+      title: "Travel Product Manager",
+      location: "Gurugram, Haryana",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Technology",
+      sector: "Travel",
     },
     {
       id: 44,
-      title: "Engineering Intern",
-      location: "Remote",
+      title: "Travel Tech Intern",
+      location: "Delhi, NCR",
       jobType: "Internship",
       audience: "Student",
-      sector: "Technology",
+      sector: "Travel",
     },
   ],
-  Snowflake: [
+  InMobi: [
     {
       id: 45,
-      title: "Cloud Infrastructure Engineer",
-      location: "San Mateo, CA",
+      title: "Ad Tech Engineer",
+      location: "Bengaluru, Karnataka",
       jobType: "Full-time",
       audience: "Working Professional",
       sector: "Technology",
@@ -460,46 +461,46 @@ export const mockResults: Record<
     {
       id: 46,
       title: "Software Engineering Intern",
-      location: "Remote",
+      location: "Bengaluru, Karnataka",
       jobType: "Internship",
       audience: "Student",
       sector: "Technology",
     },
   ],
-  Figma: [
+  PolicyBazaar: [
     {
       id: 47,
-      title: "Product Designer",
-      location: "San Francisco, CA",
+      title: "Insurance Advisor",
+      location: "Gurugram, Haryana",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Technology",
+      sector: "Finance",
     },
     {
       id: 48,
-      title: "Design Intern",
-      location: "Remote",
+      title: "InsurTech Intern",
+      location: "Delhi, NCR",
       jobType: "Internship",
       audience: "Student",
-      sector: "Technology",
+      sector: "Finance",
     },
   ],
-  Notion: [
+  Groww: [
     {
       id: 49,
-      title: "Growth Engineer",
-      location: "San Francisco, CA",
+      title: "Investment Product Manager",
+      location: "Bengaluru, Karnataka",
       jobType: "Full-time",
       audience: "Working Professional",
-      sector: "Technology",
+      sector: "Fintech",
     },
     {
       id: 50,
-      title: "Software Engineering Intern",
-      location: "Remote",
+      title: "Fintech Intern",
+      location: "Bengaluru, Karnataka",
       jobType: "Internship",
       audience: "Student",
-      sector: "Technology",
+      sector: "Fintech",
     },
   ],
 };
@@ -545,6 +546,7 @@ function getSectorColor(sector: string): string {
   const map: Record<string, string> = {
     Technology: "bg-primary/10 text-primary border-primary/20",
     Finance: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+    Fintech: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
     Healthcare: "bg-rose-500/10 text-rose-400 border-rose-500/20",
     "E-Commerce": "bg-amber-500/10 text-amber-400 border-amber-500/20",
     Automotive: "bg-orange-500/10 text-orange-400 border-orange-500/20",
@@ -552,6 +554,12 @@ function getSectorColor(sector: string): string {
     Entertainment: "bg-pink-500/10 text-pink-400 border-pink-500/20",
     "Social Media": "bg-sky-500/10 text-sky-400 border-sky-500/20",
     Travel: "bg-teal-500/10 text-teal-400 border-teal-500/20",
+    EdTech: "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
+    "Food & Delivery": "bg-orange-500/10 text-orange-400 border-orange-500/20",
+    Transportation: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+    Conglomerate: "bg-violet-500/10 text-violet-400 border-violet-500/20",
+    Gaming: "bg-pink-500/10 text-pink-400 border-pink-500/20",
+    Retail: "bg-rose-500/10 text-rose-400 border-rose-500/20",
   };
   return map[sector] ?? "bg-muted/20 text-muted-foreground border-border";
 }
@@ -766,6 +774,25 @@ interface JobsPageProps {
 export function JobsPage({ onBack, embedded = false }: JobsPageProps) {
   const [activeAudience, setActiveAudience] = useState<Audience>("All");
   const [activeCompany, setActiveCompany] = useState<string | null>(null);
+  const [analyzingCompany, setAnalyzingCompany] = useState<string | null>(null);
+
+  const handleCompanySelect = useCallback(
+    (company: string | null) => {
+      if (company && company !== activeCompany) {
+        setAnalyzingCompany(company);
+      } else {
+        setActiveCompany(company);
+      }
+    },
+    [activeCompany],
+  );
+
+  const handleAnalyzeComplete = useCallback(() => {
+    if (analyzingCompany) {
+      setActiveCompany(analyzingCompany);
+      setAnalyzingCompany(null);
+    }
+  }, [analyzingCompany]);
 
   const filtered = JOBS.filter((j) => {
     const matchAudience =
@@ -793,7 +820,7 @@ export function JobsPage({ onBack, embedded = false }: JobsPageProps) {
         <div className="flex items-center gap-2 mb-3">
           <Briefcase size={14} className="text-primary" />
           <h2 className="font-display font-bold text-lg text-foreground">
-            Top Company Job Openings
+            Top Indian Company Job Openings
           </h2>
           <span className="text-xs text-muted-foreground">
             — {JOBS.length} curated roles
@@ -814,7 +841,7 @@ export function JobsPage({ onBack, embedded = false }: JobsPageProps) {
       >
         <CompanyStrip
           activeCompany={activeCompany}
-          onSelect={setActiveCompany}
+          onSelect={handleCompanySelect}
         />
       </motion.div>
 
@@ -850,7 +877,17 @@ export function JobsPage({ onBack, embedded = false }: JobsPageProps) {
   );
 
   if (embedded) {
-    return <div className="flex flex-col flex-1">{content}</div>;
+    return (
+      <>
+        <div className="flex flex-col flex-1">{content}</div>
+        {analyzingCompany && (
+          <AnalyzingScreen
+            company={analyzingCompany}
+            onComplete={handleAnalyzeComplete}
+          />
+        )}
+      </>
+    );
   }
 
   return (
@@ -874,10 +911,10 @@ export function JobsPage({ onBack, embedded = false }: JobsPageProps) {
             </div>
             <div>
               <h1 className="font-display font-bold text-sm text-foreground leading-none">
-                Top Company Job Openings
+                Top Indian Company Job Openings
               </h1>
               <p className="text-[10px] text-muted-foreground mt-0.5">
-                {JOBS.length} curated roles across global leaders
+                {JOBS.length} curated roles across top Indian companies
               </p>
             </div>
           </div>
@@ -900,6 +937,13 @@ export function JobsPage({ onBack, embedded = false }: JobsPageProps) {
           </a>
         </p>
       </footer>
+
+      {analyzingCompany && (
+        <AnalyzingScreen
+          company={analyzingCompany}
+          onComplete={handleAnalyzeComplete}
+        />
+      )}
     </div>
   );
 }

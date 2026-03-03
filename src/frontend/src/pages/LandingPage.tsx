@@ -1,6 +1,19 @@
 import { Button } from "@/components/ui/button";
-import { BarChart2, Bell, Shield, TrendingUp, Zap } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  BarChart2,
+  Bell,
+  Eye,
+  EyeOff,
+  Shield,
+  TrendingUp,
+  Zap,
+} from "lucide-react";
 import { motion } from "motion/react";
+import { useState } from "react";
+import { toast } from "sonner";
 import { useInternetIdentity } from "../hooks/useInternetIdentity";
 
 // Aurora gradient background — no grid, no blocks
@@ -105,6 +118,219 @@ const features = [
   },
 ];
 
+function Divider() {
+  return (
+    <div className="relative my-5">
+      <div className="absolute inset-0 flex items-center">
+        <div className="w-full border-t border-border/50" />
+      </div>
+      <div className="relative flex justify-center text-xs">
+        <span className="px-3 bg-card text-muted-foreground">or</span>
+      </div>
+    </div>
+  );
+}
+
+function AuthCard({
+  login,
+  isLoggingIn,
+  isInitializing,
+}: {
+  login: () => void;
+  isLoggingIn: boolean;
+  isInitializing: boolean;
+}) {
+  // Sign In fields
+  const [signInEmail, setSignInEmail] = useState("");
+  const [signInPassword, setSignInPassword] = useState("");
+
+  // Sign Up fields
+  const [fullName, setFullName] = useState("");
+  const [username, setUsername] = useState("");
+  const [signupEmail, setSignupEmail] = useState("");
+  const [signupPassword, setSignupPassword] = useState("");
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+
+  function handleSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    toast.info("Use Internet Identity below to sign in securely");
+  }
+
+  function handleSignUp(e: React.FormEvent) {
+    e.preventDefault();
+    toast.info("Use Internet Identity below to create your account securely");
+  }
+
+  const iiButtonContent = isLoggingIn ? (
+    <span className="flex items-center gap-2">
+      <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+      Connecting...
+    </span>
+  ) : isInitializing ? (
+    "Initializing..."
+  ) : null;
+
+  return (
+    <div className="rounded-xl border border-border bg-card/80 backdrop-blur-sm shadow-card p-8">
+      <Tabs defaultValue="signin">
+        <TabsList className="w-full mb-6 bg-muted/40">
+          <TabsTrigger value="signin" className="flex-1">
+            Sign In
+          </TabsTrigger>
+          <TabsTrigger value="signup" className="flex-1">
+            Sign Up
+          </TabsTrigger>
+        </TabsList>
+
+        {/* ── Sign In ── */}
+        <TabsContent value="signin">
+          <form onSubmit={handleSignIn} className="space-y-4" noValidate>
+            <div className="space-y-1.5">
+              <Label htmlFor="signin-email">Email</Label>
+              <Input
+                id="signin-email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                value={signInEmail}
+                onChange={(e) => setSignInEmail(e.target.value)}
+                className="bg-background/60"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="signin-password">Password</Label>
+              <Input
+                id="signin-password"
+                type="password"
+                autoComplete="current-password"
+                placeholder="••••••••"
+                value={signInPassword}
+                onChange={(e) => setSignInPassword(e.target.value)}
+                className="bg-background/60"
+              />
+            </div>
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full bg-primary/90 hover:bg-primary text-primary-foreground font-semibold tracking-wide glow-primary-hover transition-all duration-200 mt-2"
+            >
+              Sign In
+            </Button>
+          </form>
+
+          <Divider />
+
+          <Button
+            type="button"
+            onClick={login}
+            disabled={isLoggingIn || isInitializing}
+            size="lg"
+            className="w-full bg-primary/90 hover:bg-primary text-primary-foreground font-semibold tracking-wide glow-primary-hover transition-all duration-200"
+          >
+            {iiButtonContent ?? "Sign in with Internet Identity"}
+          </Button>
+          <p className="text-center text-xs text-muted-foreground mt-3">
+            Secured by the Internet Computer Protocol
+          </p>
+        </TabsContent>
+
+        {/* ── Sign Up ── */}
+        <TabsContent value="signup">
+          <form onSubmit={handleSignUp} className="space-y-4" noValidate>
+            <div className="space-y-1.5">
+              <Label htmlFor="signup-fullname">Full Name</Label>
+              <Input
+                id="signup-fullname"
+                type="text"
+                autoComplete="name"
+                placeholder="Jane Doe"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+                className="bg-background/60"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="signup-username">Username</Label>
+              <Input
+                id="signup-username"
+                type="text"
+                autoComplete="username"
+                placeholder="janedoe"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="bg-background/60"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="signup-email">Email</Label>
+              <Input
+                id="signup-email"
+                type="email"
+                autoComplete="email"
+                placeholder="you@example.com"
+                value={signupEmail}
+                onChange={(e) => setSignupEmail(e.target.value)}
+                className="bg-background/60"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="signup-password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="signup-password"
+                  type={showSignupPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  placeholder="••••••••"
+                  value={signupPassword}
+                  onChange={(e) => setSignupPassword(e.target.value)}
+                  className="bg-background/60 pr-10"
+                />
+                <button
+                  type="button"
+                  aria-label={
+                    showSignupPassword ? "Hide password" : "Show password"
+                  }
+                  onClick={() => setShowSignupPassword((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                  tabIndex={0}
+                >
+                  {showSignupPassword ? (
+                    <EyeOff size={16} />
+                  ) : (
+                    <Eye size={16} />
+                  )}
+                </button>
+              </div>
+            </div>
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full bg-primary/90 hover:bg-primary text-primary-foreground font-semibold tracking-wide glow-primary-hover transition-all duration-200 mt-2"
+            >
+              Create Account
+            </Button>
+          </form>
+
+          <Divider />
+
+          <Button
+            type="button"
+            onClick={login}
+            disabled={isLoggingIn || isInitializing}
+            size="lg"
+            className="w-full bg-primary/90 hover:bg-primary text-primary-foreground font-semibold tracking-wide glow-primary-hover transition-all duration-200"
+          >
+            {iiButtonContent ?? "Sign up with Internet Identity"}
+          </Button>
+          <p className="text-center text-xs text-muted-foreground mt-3">
+            New? Internet Identity will guide you through setup.
+          </p>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}
+
 export function LandingPage() {
   const { login, isLoggingIn, isInitializing } = useInternetIdentity();
 
@@ -165,74 +391,18 @@ export function LandingPage() {
           </p>
         </motion.div>
 
-        {/* Login Card */}
+        {/* Auth Card */}
         <motion.div
           initial={{ opacity: 0, y: 32, scale: 0.97 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2, ease: "easeOut" }}
           className="w-full max-w-sm mx-auto"
         >
-          <div className="rounded-xl border border-border bg-card/80 backdrop-blur-sm shadow-card p-8">
-            <div className="text-center mb-6">
-              <h2 className="font-display font-semibold text-xl text-foreground mb-1">
-                Get Started
-              </h2>
-              <p className="text-muted-foreground text-sm">
-                Sign in with Internet Identity to access your feed
-              </p>
-            </div>
-
-            <Button
-              onClick={login}
-              disabled={isLoggingIn || isInitializing}
-              className="w-full bg-primary/90 hover:bg-primary text-primary-foreground font-semibold tracking-wide glow-primary-hover transition-all duration-200"
-              size="lg"
-            >
-              {isLoggingIn ? (
-                <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
-                  Connecting...
-                </span>
-              ) : isInitializing ? (
-                "Initializing..."
-              ) : (
-                "Sign in with Internet Identity"
-              )}
-            </Button>
-
-            <div className="relative my-6">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-border/50" />
-              </div>
-              <div className="relative flex justify-center text-xs">
-                <span className="px-3 bg-card text-muted-foreground">or</span>
-              </div>
-            </div>
-
-            <Button
-              onClick={login}
-              disabled={isLoggingIn || isInitializing}
-              variant="outline"
-              size="lg"
-              className="w-full border-border text-foreground hover:bg-muted/40 hover:border-primary/40 font-semibold tracking-wide transition-all duration-200"
-            >
-              {isLoggingIn ? (
-                <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2 border-muted-foreground/30 border-t-foreground rounded-full animate-spin" />
-                  Connecting...
-                </span>
-              ) : (
-                "Create Account"
-              )}
-            </Button>
-            <p className="text-center text-xs text-muted-foreground mt-2">
-              New? Internet Identity will guide you through setup.
-            </p>
-
-            <p className="text-center text-xs text-muted-foreground mt-4">
-              Secured by the Internet Computer Protocol
-            </p>
-          </div>
+          <AuthCard
+            login={login}
+            isLoggingIn={isLoggingIn}
+            isInitializing={isInitializing}
+          />
         </motion.div>
 
         {/* Features */}
